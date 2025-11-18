@@ -11,11 +11,11 @@ load_dotenv()
 API_URL = os.getenv("API_URL")
 API_KEY = os.getenv("API_KEY")
 MODEL_NAME = os.getenv("MODEL_NAME")
-app = FastAPI(title="Imagenizer - FastAPI backend for Qwen3-VL (vLLM)")
+app = FastAPI(title="The Japanese Writing Game")
 
 origins = [
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
+    "http://127.0.0.1:5501",
+    "http://localhost:5501",
     "http://localhost:6767",  # if needed
 ]
 
@@ -73,6 +73,8 @@ async def grade_kanji(data: dict):
                 "correct": true/false,
                 "kanji_correct": "THE_CORRECT_KANJI",
                 "kanji_detected": "KANJI_DETECTED_FROM_IMAGE",
+                "pronouce_in_romanji": "Pronunciation in romanji, easy for user to say it",
+                "pronouce_in_hiragana": "Pronunciation in hiragana, easy for user to say it",
                 "reason": "Very short, friendly explanation"
                 }}
                 """,
@@ -98,6 +100,8 @@ async def grade_kanji(data: dict):
         "correct": parsed.get("correct"),
         "kanji_detected": parsed.get("kanji_detected"),
         "kanji_correct": parsed.get("kanji_correct"),
+        "pronouce_in_romanji": parsed.get("pronouce_in_romanji"),
+        "pronouce_in_hiragana": parsed.get("pronouce_in_hiragana"),
         "similarity": parsed.get("similarity"),
         "reason": parsed.get("reason"),
     }
@@ -117,17 +121,32 @@ async def grade_katakana(data: dict):
             {
                 "type": "text",
                 "text": f"""
-                You are a katakana handwriting judge.
-                The target word is: {target_word}
-                Don't judge on the thickness of the stroke, Its okay if the student miss the thickness of the stoke as long as the student gets the correct form then you can consider it as correct
-                Convert the target_word into its correct katana.
-                Then compare the student's handwritten katakana image.
-                Respond ONLY in strict JSON:
+                You are a friendly and lenient Katakana handwriting judge.
+
+                Target English word: {target_word}
+
+                1. Convert the English target word into its correct Katakana.
+                2. Compare the student's handwritten Katakana drawing from the image.
+
+                ### VERY IMPORTANT JUDGING RULES:
+                - Do NOT judge based on stroke thickness.
+                - Do NOT judge based on perfect proportions.
+                - Small distortions or messy handwriting are acceptable.
+                - As long as the overall *shape* and *structure* look close to the correct Katakana, mark it as correct.
+                - Only mark incorrect if the drawing is clearly NOT the intended Katakana.
+
+                ### What counts as correct:
+                - Rough shape is correct  
+                - Strokes are present but slightly misplaced  
+                - Shape resembles the correct katakana even if messy  
+                - The katakana is rotated slightly or uneven — still acceptable  
+
+                ### Respond ONLY in strict JSON (no explanations outside JSON):
                 {{
-                  "correct": true/false,
-                  "katakana_correct": "CORRECT_KATAKANA",
-                  "katakana_detected": "KATAKANA",
-                  "reason": "brief explanation"
+                "correct": true/false,
+                "katakana_correct": "THE_CORRECT_KATAKANA",
+                "katakana_detected": "KATAKANA_DETECTED_FROM_IMAGE",
+                "reason": "Very short, friendly explanation"
                 }}
                 """,
             },
@@ -171,17 +190,32 @@ async def grade_hiragana(data: dict):
             {
                 "type": "text",
                 "text": f"""
-                You are a hiragana handwriting judge.
-                Don't judge on the thickness of the stroke, Its okay if the student miss the thickness of the stoke as long as the student gets the correct form then you can consider it as correct
-                The target word is: {target_word}
-                Convert the target_word into its correct katana.
-                Then compare the student's handwritten hiragana image.
-                Respond ONLY in strict JSON:
+                You are a friendly and lenient Hiragana handwriting judge.
+
+                Target English word: {target_word}
+
+                1. Convert the English target word into its correct Hiragana.
+                2. Compare the student's handwritten Hiragana drawing from the image.
+
+                ### VERY IMPORTANT JUDGING RULES:
+                - Do NOT judge based on stroke thickness.
+                - Do NOT judge based on perfect proportions.
+                - Small distortions or messy handwriting are acceptable.
+                - As long as the overall *shape* and *structure* look close to the correct Hiragana, mark it as correct.
+                - Only mark incorrect if the drawing is clearly NOT the intended Hiragana.
+
+                ### What counts as correct:
+                - Rough shape is correct  
+                - Strokes are present but slightly misplaced  
+                - Shape resembles the correct hiragana even if messy  
+                - The hiragana is rotated slightly or uneven — still acceptable  
+
+                ### Respond ONLY in strict JSON (no explanations outside JSON):
                 {{
-                  "correct": true/false,
-                  "hiragana_correct": "CORRECT_HIRAGANA",
-                  "hiragana_detected": "HIRAGANA",
-                  "reason": "brief explanation"
+                "correct": true/false,
+                "hiragana_correct": "THE_CORRECT_HIRAGANA",
+                "hiragana_detected": "HIRAGANA_DETECTED_FROM_IMAGE",
+                "reason": "Very short, friendly explanation"
                 }}
                 """,
             },

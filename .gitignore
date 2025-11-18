@@ -1,3 +1,4 @@
 .devcontainer
 .env
 __pycache__
+.vscode

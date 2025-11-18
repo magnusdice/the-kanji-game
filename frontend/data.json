@@ -1,0 +1,432 @@
+{
+  "kanji": [
+    {
+      "english": "one",
+      "kanji": "一"
+    },
+    {
+      "english": "two",
+      "kanji": "二"
+    },
+    {
+      "english": "three",
+      "kanji": "三"
+    },
+    {
+      "english": "four",
+      "kanji": "四"
+    },
+    {
+      "english": "five",
+      "kanji": "五"
+    },
+    {
+      "english": "six",
+      "kanji": "六"
+    },
+    {
+      "english": "seven",
+      "kanji": "七"
+    },
+    {
+      "english": "eight",
+      "kanji": "八"
+    },
+    {
+      "english": "nine",
+      "kanji": "九"
+    },
+    {
+      "english": "ten",
+      "kanji": "十"
+    },
+    {
+      "english": "person",
+      "kanji": "人"
+    },
+    {
+      "english": "woman",
+      "kanji": "女"
+    },
+    {
+      "english": "man",
+      "kanji": "男"
+    },
+    {
+      "english": "child",
+      "kanji": "子"
+    },
+    {
+      "english": "mouth",
+      "kanji": "口"
+    },
+    {
+      "english": "eye",
+      "kanji": "目"
+    },
+    {
+      "english": "ear",
+      "kanji": "耳"
+    },
+    {
+      "english": "hand",
+      "kanji": "手"
+    },
+    {
+      "english": "foot",
+      "kanji": "足"
+    },
+    {
+      "english": "heart",
+      "kanji": "心"
+    },
+    {
+      "english": "sun/day",
+      "kanji": "日"
+    },
+    {
+      "english": "moon/month",
+      "kanji": "月"
+    },
+    {
+      "english": "fire",
+      "kanji": "火"
+    },
+    {
+      "english": "water",
+      "kanji": "水"
+    },
+    {
+      "english": "tree",
+      "kanji": "木"
+    },
+    {
+      "english": "metal",
+      "kanji": "金"
+    },
+    {
+      "english": "earth/soil",
+      "kanji": "土"
+    },
+    {
+      "english": "mountain",
+      "kanji": "山"
+    },
+    {
+      "english": "river",
+      "kanji": "川"
+    },
+    {
+      "english": "field",
+      "kanji": "田"
+    },
+    {
+      "english": "heaven",
+      "kanji": "天"
+    },
+    {
+      "english": "spirit",
+      "kanji": "気"
+    },
+    {
+      "english": "life",
+      "kanji": "生"
+    },
+    {
+      "english": "study",
+      "kanji": "学"
+    },
+    {
+      "english": "ahead",
+      "kanji": "先"
+    },
+    {
+      "english": "name",
+      "kanji": "名"
+    },
+    {
+      "english": "power",
+      "kanji": "力"
+    },
+    {
+      "english": "word/language",
+      "kanji": "語"
+    },
+    {
+      "english": "writing",
+      "kanji": "文"
+    },
+    {
+      "english": "book",
+      "kanji": "本"
+    },
+    {
+      "english": "circle/yen",
+      "kanji": "円"
+    },
+    {
+      "english": "time",
+      "kanji": "時"
+    },
+    {
+      "english": "now",
+      "kanji": "今"
+    },
+    {
+      "english": "old",
+      "kanji": "古"
+    },
+    {
+      "english": "new",
+      "kanji": "新"
+    },
+    {
+      "english": "big",
+      "kanji": "大"
+    },
+    {
+      "english": "small",
+      "kanji": "小"
+    },
+    {
+      "english": "long",
+      "kanji": "長"
+    },
+    {
+      "english": "short",
+      "kanji": "短"
+    },
+    {
+      "english": "high/tall",
+      "kanji": "高"
+    },
+    {
+      "english": "white",
+      "kanji": "白"
+    },
+    {
+      "english": "black",
+      "kanji": "黒"
+    },
+    {
+      "english": "red",
+      "kanji": "赤"
+    },
+    {
+      "english": "blue",
+      "kanji": "青"
+    },
+    {
+      "english": "gold",
+      "kanji": "金"
+    },
+    {
+      "english": "silver",
+      "kanji": "銀"
+    },
+    {
+      "english": "rain",
+      "kanji": "雨"
+    },
+    {
+      "english": "snow",
+      "kanji": "雪"
+    },
+    {
+      "english": "wind",
+      "kanji": "風"
+    },
+    {
+      "english": "sky",
+      "kanji": "空"
+    },
+    {
+      "english": "enter",
+      "kanji": "入"
+    },
+    {
+      "english": "exit",
+      "kanji": "出"
+    },
+    {
+      "english": "up",
+      "kanji": "上"
+    },
+    {
+      "english": "down",
+      "kanji": "下"
+    },
+    {
+      "english": "left",
+      "kanji": "左"
+    },
+    {
+      "english": "right",
+      "kanji": "右"
+    },
+    {
+      "english": "middle",
+      "kanji": "中"
+    },
+    {
+      "english": "outside",
+      "kanji": "外"
+    },
+    {
+      "english": "north",
+      "kanji": "北"
+    },
+    {
+      "english": "south",
+      "kanji": "南"
+    },
+    {
+      "english": "east",
+      "kanji": "東"
+    },
+    {
+      "english": "west",
+      "kanji": "西"
+    },
+    {
+      "english": "country",
+      "kanji": "国"
+    },
+    {
+      "english": "road",
+      "kanji": "道"
+    },
+    {
+      "english": "car",
+      "kanji": "車"
+    },
+    {
+      "english": "train",
+      "kanji": "電"
+    },
+    {
+      "english": "eat",
+      "kanji": "食"
+    },
+    {
+      "english": "drink",
+      "kanji": "飲"
+    },
+    {
+      "english": "see",
+      "kanji": "見"
+    },
+    {
+      "english": "hear",
+      "kanji": "聞"
+    },
+    {
+      "english": "talk/speak",
+      "kanji": "話"
+    },
+    {
+      "english": "read",
+      "kanji": "読"
+    },
+    {
+      "english": "write",
+      "kanji": "書"
+    },
+    {
+      "english": "go",
+      "kanji": "行"
+    },
+    {
+      "english": "come",
+      "kanji": "来"
+    },
+    {
+      "english": "rest",
+      "kanji": "休"
+    },
+    {
+      "english": "buy",
+      "kanji": "買"
+    },
+    {
+      "english": "sell",
+      "kanji": "売"
+    },
+    {
+      "english": "meet",
+      "kanji": "会"
+    },
+    {
+      "english": "think",
+      "kanji": "思"
+    },
+    {
+      "english": "house",
+      "kanji": "家"
+    },
+    {
+      "english": "school",
+      "kanji": "校"
+    },
+    {
+      "english": "teacher",
+      "kanji": "先"
+    },
+    {
+      "english": "student",
+      "kanji": "生"
+    },
+    {
+      "english": "friend",
+      "kanji": "友"
+    },
+    {
+      "english": "father",
+      "kanji": "父"
+    },
+    {
+      "english": "mother",
+      "kanji": "母"
+    },
+    {
+      "english": "brother",
+      "kanji": "兄"
+    },
+    {
+      "english": "sister",
+      "kanji": "姉"
+    },
+    {
+      "english": "family",
+      "kanji": "族"
+    }
+  ],
+  "hiragana": [
+    {
+      "english": "a",
+      "kana": "あ"
+    },
+    {
+      "english": "ka",
+      "kana": "か"
+    },
+    {
+      "english": "sa",
+      "kana": "さ"
+    }
+  ],
+  "katakana": [
+    {
+      "english": "a",
+      "kana": "ア"
+    },
+    {
+      "english": "ka",
+      "kana": "カ"
+    },
+    {
+      "english": "sa",
+      "kana": "サ"
+    }
+  ]
+}

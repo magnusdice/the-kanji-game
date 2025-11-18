@@ -3,70 +3,7 @@
 
 <head>
     <title>Japanese Writing Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f3f3f3;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 500px;
-            margin: auto;
-        }
-
-        canvas {
-            border: 3px solid #333;
-            border-radius: 8px;
-            background: white;
-            cursor: crosshair;
-        }
-
-        button {
-            margin: 10px;
-            padding: 10px 18px;
-            font-size: 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        #clear {
-            background: #ff4d4d;
-            color: white;
-        }
-
-        #submit {
-            background: #4CAF50;
-            color: white;
-        }
-
-        #result-card {
-            margin-top: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            display: none;
-            text-align: left;
-        }
-
-        .label {
-            font-weight: bold;
-            margin-right: 8px;
-        }
-
-        .correct-true {
-            color: green;
-            font-weight: bold;
-        }
-
-        .correct-false {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="css/index.css">
 </head>
 
 <body>
@@ -79,78 +16,105 @@
 
     <div class="container">
         <h2 id="mode-title">Draw the <span id="writing-type">Kanji</span> for: <span id="word-display"></span></h2>
-
         <canvas id="draw" width="300" height="300"></canvas><br>
-
-        <button id="clear">Clear</button>
-        <button id="submit">Submit</button>
+        <div>
+            <button id="clear">Clear</button>
+            <button id="submit">Submit</button>
+            <button id="show-answer-button"><span id="show-text">Show </span>the answer</button>
+        </div>
+        <h3 id="answers">Answers Character: <span id="target-char"></span></h3>
 
         <div id="result-card">
             <p><span class="label">Correct:</span> <span id="correct"></span></p>
             <p><span class="label" id="detected-label">Detected Kanji:</span> <span id="detected"></span></p>
             <p><span class="label">Reason:</span> <span id="reason"></span></p>
+            <p><span class="label">Hiragana:</span> <span id="pronouce_in_hiragana"></span></p>
+            <p><span class="label">Romanji:</span> <span id="pronouce_in_romanji"></span></p>
+            <button onclick="nextWord()">Next Kanji</button>
         </div>
     </div>
 
     <script>
-        // Words
-        const kanjiWords = ["mountain", "river", "tree", "fire", "water", "sun", "moon"];
-        const katakanaWords = ["a", "ka", "sa", "ta", "na", "ha", "ma", "ra"];
-        const hiraganaWords = ["a", "ka", "sa", "ta", "na", "ha", "ma", "ra"];
-
+        let dictionary = {};
         let currentMode = "kanji"; // default
+        let currentItem = null;
 
         // UI elements
         const modeTitle = document.getElementById("mode-title");
         const detectedLabel = document.getElementById("detected-label");
         const writingType = document.getElementById("writing-type");
         const wordDisplay = document.getElementById("word-display");
+
         // Canvas
         const canvas = document.getElementById("draw");
         const ctx = canvas.getContext("2d");
         let drawing = false;
 
+        fetch("data.json").then(res => res.json()).then(data => {
+            dictionary = data;
+            nextWord();
+        })
+            .catch(err => console.error("Failed to load data:", err));
 
-        function setNewWord() {
-            if (currentMode === "kanji") {
-                writingType.textContent = "Kanji";
-                wordDisplay.textContent = kanjiWords[Math.floor(Math.random() * kanjiWords.length)];
-                detectedLabel.textContent = "Detected Kanji:";
-            } else if (currentMode === "hiragana") {
-                writingType.textContent = "Hiragana";
-                wordDisplay.textContent = hiraganaWords[Math.floor(Math.random() * hiraganaWords.length)];
-                detectedLabel.textContent = "Detected Hiragana:";
-            }
-            else {
-                writingType.textContent = "Katakana";
-                wordDisplay.textContent = katakanaWords[Math.floor(Math.random() * katakanaWords.length)];
-                detectedLabel.textContent = "Detected Katakana:";
-            }
+        function hideAnswers() {
+            document.getElementById("answers").style.display = "none";
+            document.getElementById("show-text").textContent = "Show ";
+        }
+        // ---- Pick a random word ----
+        function nextWord() {
+            const list = dictionary[currentMode];
+            currentItem = list[Math.floor(Math.random() * list.length)];
+
+
+            // Show English meaning
+            wordDisplay.textContent = currentItem.english;
+
+            // Save the correct Kanji/Kana to send to backend
+            document.getElementById("target-char").textContent = currentItem.kanji || currentItem.kana;
+
+            // Clear canvas + results
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.getElementById("result-card").style.display = "none";
+            hideAnswers();
         }
 
-
-        setNewWord();
+        // Show answers
+        document.getElementById("show-answer-button").onclick = () => {
+            var showAnswers = document.getElementById("answers")
+            if (showAnswers.style.display == "none") {
+                showAnswers.style.display = "block";
+                document.getElementById("show-text").textContent = "Hide "
+            } else {
+                hideAnswers();
+            }
+        };
 
         // Mode switching
         document.getElementById("kanji-mode").onclick = () => {
+            writingType.textContent = "Kanji";
             currentMode = "kanji";
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            setNewWord();
+            nextWord();
             document.getElementById("result-card").style.display = "none";
+            hideAnswers();
         };
 
         document.getElementById("hiragana-mode").onclick = () => {
+            writingType.textContent = "Hiragana";
             currentMode = "hiragana";
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            setNewWord();
+            nextWord();
             document.getElementById("result-card").style.display = "none";
+            hideAnswers();
         };
 
         document.getElementById("katakana-mode").onclick = () => {
+            writingType.textContent = "Katakana";
             currentMode = "katakana";
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            setNewWord();
+            nextWord();
             document.getElementById("result-card").style.display = "none";
+            hideAnswers();
         };
 
         // Canvas drawing handling
@@ -181,9 +145,15 @@
             const target_word = wordDisplay.textContent;
             const base64 = canvas.toDataURL("image/png").split(",")[1];
 
-            const url = currentMode === "kanji"
-                ? "http://localhost:6767/grade-kanji"
-                : "http://localhost:6767/grade-katakana";
+            let url = "";
+
+            if (currentMode === "kanji") {
+                url = "http://localhost:6767/grade-kanji";
+            } else if (currentMode === "katakana") {
+                url = "http://localhost:6767/grade-katakana"
+            } else if (currentMode === "hiragana") {
+                url = "http://localhost:6767/grade-hiragana"
+            }
 
             const res = await fetch(url, {
                 method: "POST",
@@ -197,8 +167,18 @@
             document.getElementById("result-card").style.display = "block";
             document.getElementById("correct").textContent = data.correct;
             document.getElementById("correct").className = data.correct ? "correct-true" : "correct-false";
-            document.getElementById("detected").textContent =
-                currentMode === "kanji" ? data.kanji_detected : data.katakana_detected;
+
+            // check the mode
+            if (currentMode === "kanji") {
+                document.getElementById("detected").textContent = data.kanji_detected;
+            } else if (currentMode === "katakana") {
+                document.getElementById("detected").textContent = data.katakana_detected;
+            } else if (currentMode === "hiragana") {
+                document.getElementById("detected").textContent = data.hiragana_detected;
+            }
+
+            document.getElementById("pronouce_in_hiragana").textContent = data.pronouce_in_hiragana;
+            document.getElementById("pronouce_in_romanji").textContent = data.pronouce_in_romanji;
 
             document.getElementById("reason").textContent = data.reason;
         };
