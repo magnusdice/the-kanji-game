@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Japanese Writing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f3f3;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        canvas {
+            border: 3px solid #333;
+            border-radius: 8px;
+            background: white;
+            cursor: crosshair;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 18px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        #clear {
+            background: #ff4d4d;
+            color: white;
+        }
+
+        #submit {
+            background: #4CAF50;
+            color: white;
+        }
+
+        #result-card {
+            margin-top: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            display: none;
+            text-align: left;
+        }
+
+        .label {
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .correct-true {
+            color: green;
+            font-weight: bold;
+        }
+
+        .correct-false {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <button id="kanji-mode">Kanji Mode</button>
+        <button id="katakana-mode">Katakana Mode</button>
+        <button id="hiragana-mode">Hiragana Mode</button>
+    </div>
+
+    <div class="container">
+        <h2 id="mode-title">Draw the <span id="writing-type">Kanji</span> for: <span id="word-display"></span></h2>
+
+        <canvas id="draw" width="300" height="300"></canvas><br>
+
+        <button id="clear">Clear</button>
+        <button id="submit">Submit</button>
+
+        <div id="result-card">
+            <p><span class="label">Correct:</span> <span id="correct"></span></p>
+            <p><span class="label" id="detected-label">Detected Kanji:</span> <span id="detected"></span></p>
+            <p><span class="label">Reason:</span> <span id="reason"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // Words
+        const kanjiWords = ["mountain", "river", "tree", "fire", "water", "sun", "moon"];
+        const katakanaWords = ["a", "ka", "sa", "ta", "na", "ha", "ma", "ra"];
+        const hiraganaWords = ["a", "ka", "sa", "ta", "na", "ha", "ma", "ra"];
+
+        let currentMode = "kanji"; // default
+
+        // UI elements
+        const modeTitle = document.getElementById("mode-title");
+        const detectedLabel = document.getElementById("detected-label");
+        const writingType = document.getElementById("writing-type");
+        const wordDisplay = document.getElementById("word-display");
+        // Canvas
+        const canvas = document.getElementById("draw");
+        const ctx = canvas.getContext("2d");
+        let drawing = false;
+
+
+        function setNewWord() {
+            if (currentMode === "kanji") {
+                writingType.textContent = "Kanji";
+                wordDisplay.textContent = kanjiWords[Math.floor(Math.random() * kanjiWords.length)];
+                detectedLabel.textContent = "Detected Kanji:";
+            } else if (currentMode === "hiragana") {
+                writingType.textContent = "Hiragana";
+                wordDisplay.textContent = hiraganaWords[Math.floor(Math.random() * hiraganaWords.length)];
+                detectedLabel.textContent = "Detected Hiragana:";
+            }
+            else {
+                writingType.textContent = "Katakana";
+                wordDisplay.textContent = katakanaWords[Math.floor(Math.random() * katakanaWords.length)];
+                detectedLabel.textContent = "Detected Katakana:";
+            }
+        }
+
+
+        setNewWord();
+
+        // Mode switching
+        document.getElementById("kanji-mode").onclick = () => {
+            currentMode = "kanji";
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            setNewWord();
+            document.getElementById("result-card").style.display = "none";
+        };
+
+        document.getElementById("hiragana-mode").onclick = () => {
+            currentMode = "hiragana";
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            setNewWord();
+            document.getElementById("result-card").style.display = "none";
+        };
+
+        document.getElementById("katakana-mode").onclick = () => {
+            currentMode = "katakana";
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            setNewWord();
+            document.getElementById("result-card").style.display = "none";
+        };
+
+        // Canvas drawing handling
+        canvas.addEventListener("mousedown", (e) => {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener("mouseup", () => drawing = false);
+        canvas.addEventListener("mouseout", () => drawing = false);
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (!drawing) return;
+            ctx.lineWidth = 8;
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        });
+
+        document.getElementById("clear").onclick = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        };
+
+        // Submit handler
+        document.getElementById("submit").onclick = async () => {
+            const target_word = wordDisplay.textContent;
+            const base64 = canvas.toDataURL("image/png").split(",")[1];
+
+            const url = currentMode === "kanji"
+                ? "http://localhost:6767/grade-kanji"
+                : "http://localhost:6767/grade-katakana";
+
+            const res = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ target_word, image: base64 })
+            });
+
+            const data = await res.json();
+
+            // Display results
+            document.getElementById("result-card").style.display = "block";
+            document.getElementById("correct").textContent = data.correct;
+            document.getElementById("correct").className = data.correct ? "correct-true" : "correct-false";
+            document.getElementById("detected").textContent =
+                currentMode === "kanji" ? data.kanji_detected : data.katakana_detected;
+
+            document.getElementById("reason").textContent = data.reason;
+        };
+    </script>
+
+</body>
+
+</html>
