@@ -5,11 +5,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anki Mode</title>
+    <link rel="stylesheet" href="css/index.css">
 </head>
 
 <body>
+    <div class="container">
+        <h2 id="mode-title">How do you pronouce this kanji:
+            <span id="kanji-display">
+            </span>
+        </h2>
+        <input type="text" id="user-input">
+        <div>
+            <button onclick="nextWord()">Next Word</button>
+            <button id="submit">Submit</button>
+        </div>
+    </div>
+    <div id="result-card">
+        <p><span class="label">Correct:</span> <span id="correct"></span></p>
+        <p><span class="label">Reason:</span> <span id="reason"></span></p>
+        <p><span class="label">Pronounciation:</span> <span id="pronoucation"></span></p>
+        <p><span class="label">Meaning:</span> <span id="meaning"></span></p>
+    </div>
 
 
 </body>
+<script>
+    let dictionary = {};
+    let currentMode = "kanji"
+
+    const kanjiDisplay = document.getElementById("kanji-display");
+    const userInput = document.getElementById("user-input");
+
+    fetch("data.json").then(res => res.json()).then(data => {
+        dictionary = data;
+        nextWord();
+
+    }).catch(err => console.error("Failed to load data:", err));
+
+    function nextWord() {
+
+        const list = dictionary[currentMode];
+        currentItem = list[Math.floor(Math.random() * list.length)];
+
+        kanjiDisplay.textContent = currentItem.kanji;
+    }
+
+    document.getElementById("submit").onclick = async () => {
+        const target_kanji = kanjiDisplay.textContent;
+        const user_input = userInput.value;
+        const url = "http://localhost:6767/anki-mode";
+
+        const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ target_kanji, user_input })
+        });
+
+        const data = await res.json();
+
+        document.getElementById("result-card").style.display = "block";
+        document.getElementById("correct").textContent = data.correct;
+        document.getElementById("correct").className = data.correct ? "correct-true" : "correct-false";
+        document.getElementById("pronoucation").textContent = data.pronouce_in_hiragana;
+        document.getElementById("reason").textContent = data.reason;
+        document.getElementById("meaning").textContent = data.meaning;
+
+    };
+
+</script>
 
 </html>

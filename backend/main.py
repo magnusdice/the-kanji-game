@@ -33,6 +33,13 @@ llm = ChatOpenAI(
     temperature=0,
 )
 
+llama_llm = ChatOpenAI(
+    base_url=os.getenv("LLAMA_API_URL"),
+    api_key=os.getenv("LLAMA_API_KEY"),
+    model=os.getenv("LLAMA_MODEL_NAME"),
+    temperature = 0
+)
+
 
 
 @app.post("/anki-mode")
@@ -46,40 +53,45 @@ async def anki_mode(data: dict):
             {
                 "type": "text",
                 "text": f"""
-                You are a friendly and lenient Kanji handwriting judge.
+                You are a friendly and lenient Kanji judge.
 
-                Target English word: {target_word}
+                Target Kanji : {target_kanji}
+                Converted Kanji to Romanji : Convert Target Kanji into Romanji | You will convert the target kanji = {target_kanji} into Romanji
+                Converted Kanji to Hiragana : Convert Target Kanji into Hiragana | You will convert the target kanji = {target_kanji} into Hiragana
+                User Input: {user_input}
 
-                1. Convert the English target word into its correct Kanji.
-                2. Compare the student's handwritten Kanji drawing from the image.
-
-                ### VERY IMPORTANT JUDGING RULES:
-                - Do NOT judge based on stroke thickness.
-                - Do NOT judge based on perfect proportions.
-                - Small distortions or messy handwriting are acceptable.
-                - As long as the overall *shape* and *structure* look close to the correct Kanji, mark it as correct.
-                - Only mark incorrect if the drawing is clearly NOT the intended Kanji.
-
-                ### What counts as correct:
-                - Rough shape is correct  
-                - Strokes are present but slightly misplaced  
-                - Shape resembles the correct kanji even if messy  
-                - The kanji is rotated slightly or uneven — still acceptable  
+                How do you judge:
+                User will input either in romanji or hiragana
+                Compare the User Input with the converted kanji and determined whether it is correct or not
 
                 ### Respond ONLY in strict JSON (no explanations outside JSON):
                 {{
                 "correct": true/false,
-                "kanji_correct": "THE_CORRECT_KANJI",
-                "kanji_detected": "KANJI_DETECTED_FROM_IMAGE",
-                "pronouce_in_romanji": "Pronunciation in romanji, easy for user to say it",
-                "pronouce_in_hiragana": "Pronunciation in hiragana, easy for user to say it",
-                "reason": "Very short, friendly explanation"
+                "pronouce_in_hiragana": "Pronunciation STRICTLY in hiragana",
+                "reason": "Very short, friendly explanation of why is it correct/wrong",
+                "meaning" : "Translation of the kanji into English"
                 }}
                 """,
             }
 
         ]
     )
+    result = llama_llm.invoke([message])
+    raw = result.content.strip()  # type: ignore
+
+    try:
+        parsed = json.loads(raw)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500, detail="Model reutrned invalid JSON"
+        ) from exc
+
+    return {
+        "correct": parsed.get("correct"),
+        "pronouce_in_hiragana": parsed.get("pronouce_in_hiragana"),
+        "meaning": parsed.get("meaning"),
+        "reason": parsed.get("reason"),
+    }
 
 
 @app.post("/grade-kanji")
