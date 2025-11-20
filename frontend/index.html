@@ -15,6 +15,10 @@
     </div>
 
     <div class="container">
+        <div id="health-display">
+            <span class="health-label">Health: </span>
+            <span id="health-hearts"></span>
+        </div>
         <h2 id="mode-title">Draw the <span id="writing-type">Kanji</span> for: <span id="word-display"></span></h2>
         <canvas id="draw" width="300" height="300"></canvas><br>
         <div>
@@ -30,7 +34,13 @@
             <p><span class="label">Reason:</span> <span id="reason"></span></p>
             <p><span class="label">Hiragana:</span> <span id="pronouce_in_hiragana"></span></p>
             <p><span class="label">Romanji:</span> <span id="pronouce_in_romanji"></span></p>
-            <button onclick="nextWord()">Next Kanji</button>
+            <button onclick="nextWord()" id="next-button">Next Kanji</button>
+        </div>
+
+        <div id="game-over-message"
+            style="display: none; margin-top: 20px; padding: 20px; background: #ffebee; border-radius: 10px; border: 2px solid #f44336;">
+            <h2 style="color: #d32f2f;">Game Over!</h2>
+            <p>You've run out of health. Click a mode button to start a new game.</p>
         </div>
     </div>
 
@@ -38,17 +48,34 @@
         let dictionary = {};
         let currentMode = "kanji"; // default
         let currentItem = null;
+        let health = 3; // Health system: start with 3 lives
 
         // UI elements
         const modeTitle = document.getElementById("mode-title");
         const detectedLabel = document.getElementById("detected-label");
         const writingType = document.getElementById("writing-type");
         const wordDisplay = document.getElementById("word-display");
+        const healthHearts = document.getElementById("health-hearts");
 
         // Canvas
         const canvas = document.getElementById("draw");
         const ctx = canvas.getContext("2d");
         let drawing = false;
+
+        // Update health display
+        function updateHealthDisplay() {
+            let heartsHTML = "";
+            for (let i = 0; i < health; i++) {
+                heartsHTML += "❤️";
+            }
+            for (let i = health; i < 3; i++) {
+                heartsHTML += "🤍";
+            }
+            healthHearts.textContent = heartsHTML;
+        }
+
+        // Initialize health display
+        updateHealthDisplay();
 
         fetch("data.json").then(res => res.json()).then(data => {
             dictionary = data;
@@ -62,6 +89,11 @@
         }
         // ---- Pick a random word ----
         function nextWord() {
+            // Check if game is over
+            if (health <= 0) {
+                return; // Don't proceed if game is over
+            }
+
             const list = dictionary[currentMode];
             currentItem = list[Math.floor(Math.random() * list.length)];
 
@@ -89,10 +121,20 @@
             }
         };
 
+        // Reset health and game
+        function resetGame() {
+            health = 3;
+            updateHealthDisplay();
+            document.getElementById("game-over-message").style.display = "none";
+            document.getElementById("submit").disabled = false;
+            document.getElementById("next-button").disabled = false;
+        }
+
         // Mode switching
         document.getElementById("kanji-mode").onclick = () => {
             writingType.textContent = "Kanji";
             currentMode = "kanji";
+            resetGame();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             nextWord();
             document.getElementById("result-card").style.display = "none";
@@ -102,6 +144,7 @@
         document.getElementById("hiragana-mode").onclick = () => {
             writingType.textContent = "Hiragana";
             currentMode = "hiragana";
+            resetGame();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             nextWord();
             document.getElementById("result-card").style.display = "none";
@@ -111,6 +154,7 @@
         document.getElementById("katakana-mode").onclick = () => {
             writingType.textContent = "Katakana";
             currentMode = "katakana";
+            resetGame();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             nextWord();
             document.getElementById("result-card").style.display = "none";
@@ -162,6 +206,19 @@
             });
 
             const data = await res.json();
+
+            // Handle health system: lose health if wrong
+            if (!data.correct) {
+                health--;
+                updateHealthDisplay();
+
+                // Check for game over
+                if (health <= 0) {
+                    document.getElementById("game-over-message").style.display = "block";
+                    document.getElementById("submit").disabled = true;
+                    document.getElementById("next-button").disabled = true;
+                }
+            }
 
             // Display results
             document.getElementById("result-card").style.display = "block";

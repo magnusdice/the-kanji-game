@@ -69,3 +69,31 @@ button {
     color: red;
     font-weight: bold;
 }
+
+#health-display {
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.health-label {
+    margin-right: 8px;
+}
+
+#health-hearts {
+    font-size: 24px;
+    letter-spacing: 4px;
+}
+
+#game-over-message {
+    margin-top: 20px;
+    padding: 20px;
+    background: #ffebee;
+    border-radius: 10px;
+    border: 2px solid #f44336;
+}
+
+#game-over-message h2 {
+    color: #d32f2f;
+    margin-top: 0;
+}
