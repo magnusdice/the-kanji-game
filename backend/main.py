@@ -64,39 +64,11 @@ def anki_prompt(target_kanji:str, user_input:str) -> HumanMessage:
                 """
     return HumanMessage(content=prompt_text) 
 
-def grade_kanji_prompt(target_word:str)->HumanMessage:
-    prompt_text=f"""
-                You are a friendly and lenient Kanji handwriting judge.
-
-                Target English word: {target_word}
-
-                1. Convert the English target word into its correct Kanji.
-                2. Compare the student's handwritten Kanji drawing from the image.
-
-                ### VERY IMPORTANT JUDGING RULES:
-                - Do NOT judge based on stroke thickness.
-                - Do NOT judge based on perfect proportions.
-                - Small distortions or messy handwriting are acceptable.
-                - As long as the overall *shape* and *structure* look close to the correct Kanji, mark it as correct.
-                - Only mark incorrect if the drawing is clearly NOT the intended Kanji.
-
-                ### What counts as correct:
-                - Rough shape is correct  
-                - Strokes are present but slightly misplaced  
-                - Shape resembles the correct kanji even if messy  
-                - The kanji is rotated slightly or uneven — still acceptable  
-
-                ### Respond ONLY in strict JSON (no explanations outside JSON):
-                {{
-                "correct": true/false,
-                "kanji_correct": "THE_CORRECT_KANJI",
-                "kanji_detected": "KANJI_DETECTED_FROM_IMAGE",
-                "pronouce_in_romanji": "Pronunciation in romanji, easy for user to say it",
-                "pronouce_in_hiragana": "Pronunciation in hiragana, easy for user to say it",
-                "reason": "Very short, friendly explanation"
-                }}
-    """
-    return HumanMessage(content=prompt_text)
+### Izu's code might reuse for scalable
+# def grade_kanji_prompt(target_word:str)->HumanMessage:
+#     prompt_text=f"""
+#     """
+#     return HumanMessage(content=prompt_text)
 
 @app.post("/anki-mode")
 async def anki_mode(data: dict):
@@ -137,7 +109,35 @@ async def grade_kanji(data: dict):
             {
                 "type": "text",
                 "text": f"""
-                
+                You are a friendly and lenient Kanji handwriting judge.
+
+                Target English word: {target_word}
+
+                1. Convert the English target word into its correct Kanji.
+                2. Compare the student's handwritten Kanji drawing from the image.
+
+                ### VERY IMPORTANT JUDGING RULES:
+                - Do NOT judge based on stroke thickness.
+                - Do NOT judge based on perfect proportions.
+                - Small distortions or messy handwriting are acceptable.
+                - As long as the overall *shape* and *structure* look close to the correct Kanji, mark it as correct.
+                - Only mark incorrect if the drawing is clearly NOT the intended Kanji.
+
+                ### What counts as correct:
+                - Rough shape is correct  
+                - Strokes are present but slightly misplaced  
+                - Shape resembles the correct kanji even if messy  
+                - The kanji is rotated slightly or uneven — still acceptable  
+
+                ### Respond ONLY in strict JSON (no explanations outside JSON):
+                {{
+                "correct": true/false,
+                "kanji_correct": "THE_CORRECT_KANJI",
+                "kanji_detected": "KANJI_DETECTED_FROM_IMAGE",
+                "pronouce_in_romanji": "Pronunciation in romanji, easy for user to say it",
+                "pronouce_in_hiragana": "Pronunciation in hiragana, easy for user to say it",
+                "reason": "Very short, friendly explanation"
+                }}
                 """,
             },
             {
